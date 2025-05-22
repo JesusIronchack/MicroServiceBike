@@ -1,6 +1,7 @@
 package com.example.MicroServiceBike.Service;
 
 import com.example.MicroServiceBike.Client.StationClient;
+import com.example.MicroServiceBike.DTO.StationDTO;
 import com.example.MicroServiceBike.Models.Bike;
 import com.example.MicroServiceBike.Repositories.Bikerepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,12 @@ public class BikeService {
     private StationClient stationClient;
 
     public List<Bike> getAllBikes() {
+
         return bikeRepository.findAll();
     }
 
     public Bike createBike(Bike bike) {
+
         return bikeRepository.save(bike);
     }
 
@@ -30,7 +33,11 @@ public class BikeService {
     }
 
     public void deleteBike(Long id) {
+
         bikeRepository.deleteById(id);
     }
 
+    public StationDTO getStationByBike(Long stationId) {
+        return stationClient.getStationById(stationId);
+    }
 }

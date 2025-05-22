@@ -1,8 +1,12 @@
 package com.example.MicroServiceBike.Controller;
 
+import com.example.MicroServiceBike.DTO.StationDTO;
 import com.example.MicroServiceBike.Models.Bike;
+import com.example.MicroServiceBike.Service.BikeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/bikes")
