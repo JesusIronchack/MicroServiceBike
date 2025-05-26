@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(name = "MicroServiceStation")
 public interface StationClient {
-    @GetMapping("/station/{id}")
+    @GetMapping("/api/stations/{id}")
     StationDTO getStationById(@PathVariable Long id);
 }
