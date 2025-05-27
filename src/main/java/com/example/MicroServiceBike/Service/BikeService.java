@@ -76,11 +76,26 @@ public class BikeService {
                 .orElseThrow(() -> new RuntimeException("Bike not found"));
 
         try {
-            StationDTO station = stationClient.getStationById(stationId);
-            bike.setStationId(station.getId());
+            StationDTO stationDTO = stationClient.getStationById(stationId);
+            bike.setStationId(stationDTO.getId());
 
         } catch (FeignException.NotFound e) {
             throw new RuntimeException("Station with ID " + stationId + " not found in station-service");
+        }
+
+        return bikeRepository.save(bike);
+    }
+
+    public Bike assignNotifications(Long bikeId, Long notificationId) {
+        Bike bike = bikeRepository.findById(bikeId)
+                .orElseThrow(() -> new RuntimeException("Bike not found"));
+
+        try {
+            NotificationsDTO notificationsDTO = notificationClient.getNotificationById(notificationId);
+            bike.setNotificationsId(notificationsDTO.getId());
+
+        } catch (FeignException.NotFound e) {
+            throw new RuntimeException("Station with ID " + notificationId + " not found in station-service");
         }
 
         return bikeRepository.save(bike);

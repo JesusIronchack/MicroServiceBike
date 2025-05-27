@@ -51,4 +51,11 @@ public class BikeController {
         Bike bike = bikeService.assignStationToBike(bikeId, stationId);
         return ResponseEntity.ok(bike);
     }
+
+    @PutMapping("/{bikeId}/notifications/{notificationId}")
+    public ResponseEntity<Bike> assignNotifications(@PathVariable Long bikeId, @PathVariable Long notificationId) {
+        Bike bike = bikeService.assignNotifications(bikeId, notificationId);
+        return ResponseEntity.ok(bike);
+    }
+
 }
