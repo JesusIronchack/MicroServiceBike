@@ -14,10 +14,11 @@ public class BikeDTO {
     private StationDTO station;
     private NotificationsDTO notifications;
 
-    public BikeDTO(Long id, String model, String status, NotificationsDTO message) {
+    public BikeDTO(Long id, String model, String status, NotificationsDTO notifications, StationDTO station) {
         this.id = id;
         this.model = model;
         this.status = status;
         this.notifications = notifications;
+        this.station = station;
     }
 }

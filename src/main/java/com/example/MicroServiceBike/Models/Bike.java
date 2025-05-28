@@ -19,6 +19,6 @@ public class Bike {
     private String Status;
 
     private Long stationId;
-    private Long notificationsId;
+    private Long notificationId;
 
 }
