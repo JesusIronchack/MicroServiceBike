@@ -21,4 +21,5 @@ public class BikeDTO {
         this.notifications = notifications;
         this.station = station;
     }
+
 }

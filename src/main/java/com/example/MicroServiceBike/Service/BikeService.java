@@ -32,31 +32,63 @@ public class BikeService {
             List<Bike> bikes = bikeRepository.findAll();
 
             return bikes.stream().map(bike -> {
-                StationDTO station = (bike.getStationId() != null)
-                        ? stationClient.getStationById(bike.getStationId())
-                        : null;
+                StationDTO stationDTO = null;
+                try {
+                    if (bike.getStationId() != null) {
+                        stationDTO = stationClient.getStationById(bike.getStationId());
+                    }
+                } catch (FeignException e) {
+                    System.out.println("Warning: Station service is unavailable.");
+                }
 
-                NotificationsDTO notifications = (bike.getNotificationId() != null)
-                        ? notificationClient.getNotificationById(bike.getNotificationId())
-                        : null;
+                NotificationsDTO notificationsDTO = null;
+                try{
+                    if (bike.getNotificationId() != null) {
+                            notificationsDTO = notificationClient.getNotificationById(bike.getNotificationId());
+                        }
+                } catch (FeignException e) {
+                    System.out.println("Warning: Notification service is unavailable.");
+                }
 
-                return new BikeDTO(bike.getId(), bike.getModel(), bike.getStatus(), notifications, station);
+                return new BikeDTO(bike.getId(), bike.getModel(), bike.getStatus(), notificationsDTO, stationDTO);
             }).collect(Collectors.toList());
-        } catch (RuntimeException e){
-            throw new RuntimeException("No bikes Found: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("Error displaying bikes: " + e.getMessage());
+            return List.of();
         }
     }
 
 
-    public Bike getBikeById(Long id) {
-        return bikeRepository.findById(id)
+    public BikeDTO getBikeById(Long id) {
+        Bike bike = bikeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Bike not found with ID: " + id));
+
+        NotificationsDTO notificationsDTO = null;
+        try {
+            if (bike.getNotificationId() != null) {
+                notificationsDTO = notificationClient.getNotificationById(bike.getNotificationId());
+            }
+        } catch (FeignException e) {
+            System.out.println("Warning: Notification service is unavailable.");
+        }
+
+        StationDTO stationDTO = null;
+        try {
+            if (bike.getStationId() != null) {
+                stationDTO = stationClient.getStationById(bike.getStationId());
+            }
+        } catch (FeignException e) {
+            System.out.println("Warning: Station service is unavailable.");
+        }
+
+        return new BikeDTO(bike.getId(), bike.getModel(), bike.getStatus(), notificationsDTO, stationDTO);
     }
 
 
-    public Bike createBike(Bike bike) {
+    public BikeBasicDTO createBike(Bike bike) {
         try {
-            return bikeRepository.save(bike);
+            Bike savedBike = bikeRepository.save(bike);
+            return new BikeBasicDTO(savedBike.getId(), savedBike.getModel(), savedBike.getStatus(), savedBike.getStationId());
         }catch (RuntimeException e) {
             throw new RuntimeException("Error creating bike: " + e.getMessage());
         }
@@ -88,11 +120,6 @@ public class BikeService {
             Bike bike = bikeRepository.findById(bikeId)
                     .orElseThrow(() -> new RuntimeException("Bike not found"));
 
-            if (bike.getStationId() != null) {
-                throw new RuntimeException("Bike ID " + bikeId + " is already assigned to station ID " + bike.getStationId());
-            }
-
-
                 StationDTO stationDTO = stationClient.getStationById(stationId);
                 bike.setStationId(stationDTO.getId());
             return bikeRepository.save(bike);
@@ -107,7 +134,6 @@ public class BikeService {
         Bike bike = bikeRepository.findById(bikeId)
                 .orElseThrow(() -> new RuntimeException("Bike not found"));
 
-
             NotificationsDTO notificationsDTO = notificationClient.getNotificationById(notificationId);
             bike.setNotificationId(notificationsDTO.getId());
 
@@ -116,9 +142,8 @@ public class BikeService {
         } catch (FeignException.NotFound e) {
             throw new RuntimeException("Station with ID " + notificationId + " not found in station-service");
         }
-
-
     }
+
 
     public List<BikeBasicDTO> getBikesByStation(Long stationId) {
         try {

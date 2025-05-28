@@ -21,9 +21,14 @@ public class BikeController {
     private BikeService bikeService;
 
     @PostMapping
-    public Bike createBike(@RequestBody Bike bike) {
-
-        return bikeService.createBike(bike);
+    public ResponseEntity<?> createBike(@RequestBody Bike bike) {
+        try {
+            BikeBasicDTO bikeBasicDTO = bikeService.createBike(bike);
+            return ResponseEntity.status(HttpStatus.CREATED).body(bikeBasicDTO);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new MessageResponseDTO("Error creating bike: " + e.getMessage()));
+        }
     }
 
     @GetMapping
@@ -39,8 +44,8 @@ public class BikeController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getBikeById(@PathVariable Long id) {
         try {
-            Bike bike = bikeService.getBikeById(id);
-            return ResponseEntity.ok(bike);
+            BikeDTO bikeDTO = bikeService.getBikeById(id);
+            return ResponseEntity.ok(bikeDTO);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponseDTO("Bike not found: " + e.getMessage()));
         }
@@ -54,7 +59,6 @@ public class BikeController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new MessageResponseDTO("Error updating bike with ID: " + id + " - " + e.getMessage()));
-
         }
     }
 
