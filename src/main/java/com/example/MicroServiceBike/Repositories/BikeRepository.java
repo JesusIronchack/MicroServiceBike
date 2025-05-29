@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface Bikerepository extends JpaRepository<Bike, Long> {
+public interface BikeRepository extends JpaRepository<Bike, Long> {
     List<Bike> findByStationId(Long stationId);
 }

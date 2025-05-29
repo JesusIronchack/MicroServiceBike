@@ -7,7 +7,7 @@ import com.example.MicroServiceBike.DTO.BikeDTO;
 import com.example.MicroServiceBike.DTO.NotificationsDTO;
 import com.example.MicroServiceBike.DTO.StationDTO;
 import com.example.MicroServiceBike.Models.Bike;
-import com.example.MicroServiceBike.Repositories.Bikerepository;
+import com.example.MicroServiceBike.Repositories.BikeRepository;
 import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 public class BikeService {
     @Autowired
-    private Bikerepository bikeRepository;
+    private BikeRepository bikeRepository;
 
     @Autowired
     private NotificationClient notificationClient;
